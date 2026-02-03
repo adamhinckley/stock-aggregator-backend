@@ -10,8 +10,6 @@ export class SupabaseService {
     const supabaseUrl = this.configService.get<string>('SUPABASE_URL');
     const supabaseKey = this.configService.get<string>('SUPABASE_ANON_KEY');
 
-    console.log('***SupabaseService initialized***', supabaseUrl);
-
     if (!supabaseUrl || !supabaseKey) {
       throw new Error('Missing Supabase credentials in environment variables');
     }

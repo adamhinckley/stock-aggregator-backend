@@ -15,11 +15,6 @@ export class AppController {
     private readonly supabaseService: SupabaseService,
   ) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
-
   @Post('login')
   async login(@Body() body: any) {
     console.log('Full body received:', body);
