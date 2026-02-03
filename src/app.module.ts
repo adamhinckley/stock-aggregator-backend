@@ -4,9 +4,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ApiDataModule } from './apiData/apiData.module';
 import { SupabaseModule } from './supabase/supabse.modiule';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), SupabaseModule, ApiDataModule],
+  imports: [ConfigModule.forRoot(), SupabaseModule, ApiDataModule, RedisModule],
   controllers: [AppController],
   providers: [AppService],
 })
