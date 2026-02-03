@@ -13,11 +13,16 @@ export class ApiDataController {
     @Query('include') include?: string,
     @Query('maxStories') maxStories?: string,
   ) {
-    const includes = include?.split(',') || ['profile', 'news', 'financials'];
+    const includes = include?.split(',') || [
+      'profile',
+      'news',
+      'financials',
+      'logo',
+    ];
 
     console.log('max', maxStories);
 
-    const [profile, news, financials] = await Promise.all([
+    const [profile, news, financials, nameAndLogo] = await Promise.all([
       includes.includes('profile')
         ? this.apiDataService.getProfile(symbol)
         : null,
@@ -30,8 +35,11 @@ export class ApiDataController {
       includes.includes('financials')
         ? this.apiDataService.getFinancials(symbol)
         : null,
+      includes.includes('logo')
+        ? this.apiDataService.getCompanyNameAndLogo(symbol)
+        : null,
     ]);
 
-    return { profile, news, financials };
+    return { profile, news, financials, nameAndLogo };
   }
 }
