@@ -9,6 +9,7 @@ const CACHE_TTL = {
   PROFILE: 60 * 60 * 24, // 24 hours
   NEWS: 60 * 15, // 15 minutes
   FINANCIALS: 60 * 60, // 1 hour becuase the rate limit is 25 calls per day
+  SYMBOL: 60 * 60 * 24, // 24 hours
 };
 
 @Injectable()
@@ -121,18 +122,44 @@ export class ApiDataService {
 
     return data;
   }
+  async getCompanyNameAndLogo(symbol: string) {
+    const cacheKey = `symbols`;
+
+    const apiKey = this.configService.get<string>('FINNHUB_API_KEY');
+
+    if (!apiKey) {
+      throw new Error('FINNHUB_API_KEY is not set in environment variables');
+    }
+
+    const response = await fetch(
+      ` https://finnhub.io/api/v1/stock/profile2?symbol=${symbol}&token=${apiKey}`,
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch symbols data: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    console.log('symbol', data);
+
+    return { logo: data.logo, name: data.name };
+  }
 
   async getCombinedStockData(symbol: string) {
-    const [profileData, newsData, financialsData] = await Promise.all([
-      this.getProfile(symbol),
-      this.getCompanyNews(symbol),
-      this.getFinancials(symbol),
-    ]);
+    const [profileData, newsData, financialsData, nameAndLogoData] =
+      await Promise.all([
+        this.getProfile(symbol),
+        this.getCompanyNews(symbol),
+        this.getFinancials(symbol),
+        this.getCompanyNameAndLogo(symbol),
+      ]);
 
     return {
       profile: profileData,
       news: newsData,
       financials: financialsData,
+      nameAndLogo: nameAndLogoData,
     };
   }
 }
